@@ -30,6 +30,7 @@ class TestNepaliUnicoder(unittest.TestCase):
         # nepaala -> ne (ने) pa (प) -> paa (पा) la (ल)
         # nepaala -> नेपाल
         self.assertEqual(self.converter.convert("nepaala"), "नेपाल")
+        self.assertEqual(self.converter.convert("nepal"), "नेपाल")  # form word_maps.txt
         self.assertEqual(self.converter.convert("mero"), "मेरो")
         # naam -> नाम्. naama -> नाम
         self.assertEqual(self.converter.convert("naama"), "नाम")

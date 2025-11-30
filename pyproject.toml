@@ -7,7 +7,7 @@ name = "nepali_unicoder"
 version = "0.1.0"
 description = "A Python package for Roman to Nepali (Devanagari) transliteration"
 authors = [
-  { name="realsanjeev", email="sanjeev@example.com" },
+  { name="realsanjeev", email="075bei033.sanjeev@pcampus.edu.np" },
 ]
 readme = "README.md"
 requires-python = ">=3.7"
