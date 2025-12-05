@@ -27,3 +27,5 @@ pythonpath = [
 testpaths = [
     "tests",
 ]
+
+# TODO(realsanjeev): Add the dev dependencies like pre-commit

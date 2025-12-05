@@ -3,7 +3,7 @@ import os
 from dataclasses import dataclass
 from typing import List
 
-from nepali_unicoder.trie import Trie
+from nepali_unicoder.fst import FST
 
 
 @dataclass
@@ -14,12 +14,12 @@ class Token:
 
 class Engine:
     def __init__(self):
-        self.trie = Trie()
+        self.fst = FST()
         self.load_rules()
         self.load_custom_mappings()
 
     def load_rules(self):
-        """Load rules from JSON and populate the Trie."""
+        """Load rules from JSON and populate the FST."""
         rules_path = os.path.join(os.path.dirname(__file__), "rules.json")
         if not os.path.exists(rules_path):
             raise FileNotFoundError(f"Rules file not found: {rules_path}")
@@ -35,56 +35,47 @@ class Engine:
 
         # 1. Independent Vowels
         for rom, dev in vowels.items():
-            self.trie.insert(rom, dev)
+            self.fst.add_mapping(rom, dev)
 
         # 2. Consonants and Combinations
         halanta = "्"
 
         for rom_cons, dev_cons in consonants.items():
             # Case 1: Consonant alone (halanta form) -> 'k' -> 'क्'
-            self.trie.insert(rom_cons, dev_cons + halanta)
+            self.fst.add_mapping(rom_cons, dev_cons + halanta)
 
             # Case 2: Consonant + 'a' (Schwa form) -> 'ka' -> 'क'
-            self.trie.insert(rom_cons + "a", dev_cons)
+            self.fst.add_mapping(rom_cons + "a", dev_cons)
 
             # Case 3: Consonant + other vowels -> 'ki' -> 'कि'
             for rom_vowel, matra in matras.items():
                 if rom_vowel == "a":
                     continue  # Handled above
-                self.trie.insert(rom_cons + rom_vowel, dev_cons + matra)
+                self.fst.add_mapping(rom_cons + rom_vowel, dev_cons + matra)
 
         # 3. Special, Digits, Punctuation
         for rom, dev in special.items():
-            self.trie.insert(rom, dev)
+            self.fst.add_mapping(rom, dev)
 
         for rom, dev in digits.items():
-            self.trie.insert(rom, dev)
+            self.fst.add_mapping(rom, dev)
 
         # Ensure 'a' maps to 'अ' (already in vowels, but good to double check)
-        self.trie.insert("a", vowels.get("a", "अ"))
+        self.fst.add_mapping("a", vowels.get("a", "अ"))
 
     def load_custom_mappings(self):
-        """Load custom word mappings from word_maps.txt."""
-        filepath = os.path.join(os.path.dirname(__file__), "word_maps.txt")
+        """Load custom word mappings from word_maps.json."""
+        filepath = os.path.join(os.path.dirname(__file__), "word_maps.json")
         if not os.path.exists(filepath):
             return
 
         try:
             with open(filepath, "r", encoding="utf-8") as f:
-                for line in f:
-                    line = line.strip()
-                    if not line or line.startswith("#"):
-                        continue
-                    parts = line.split(maxsplit=1)
-                    if len(parts) == 2:
-                        roman, devanagari = parts
-                        # Insert directly into Trie.
-                        # Since Trie matches longest prefix, full words will naturally take precedence
-                        # if they are longer than sub-parts.
-                        # However, if we have 'nepal' -> 'नेपाल' and 'ne' -> 'ने', 'nepal' is longer.
-                        self.trie.insert(roman.lower(), devanagari)
+                mappings = json.load(f)
+                for roman, devanagari in mappings.items():
+                    self.fst.add_mapping(roman.lower(), devanagari)
         except Exception as e:
-            print(f"Error reading word_maps.txt: {e}")
+            print(f"Error reading word_maps.json: {e}")
 
     def tokenize(self, text: str) -> List[Token]:
         """
@@ -100,9 +91,6 @@ class Engine:
                 # Check for escape {{
                 if i + 1 < n and text[i + 1] == "{":
                     # Actually, if it's escaped, it should probably be treated as a literal '{' in the output.
-                    # But wait, the previous logic was: {{ -> {
-                    # If we treat it as ROMAN, the Trie won't match '{'.
-                    # So we should probably handle it here.
                     tokens.append(Token(value="{", type="LITERAL"))
                     i += 2
                 else:
@@ -124,9 +112,6 @@ class Engine:
                 i += 1
             else:
                 # Accumulate Roman text
-                # We could split by whitespace, but the Trie handles spaces if we insert them?
-                # No, usually we process the whole string.
-                # Let's just grab the chunk until next special char
                 j = i
                 while j < n and text[j] not in "{}":
                     j += 1
@@ -137,7 +122,7 @@ class Engine:
 
     def transliterate(self, text: str) -> str:
         """
-        Convert Roman text to Devanagari using the Trie.
+        Convert Roman text to Devanagari using the FST.
         """
         if not text:
             return ""
@@ -151,18 +136,15 @@ class Engine:
             elif token.type == "LITERAL":
                 result.append(token.value)
             elif token.type == "ROMAN":
-                # Process Roman chunk with Trie
+                # Process Roman chunk with FST
                 chunk = token.value
                 idx = 0
                 chunk_len = len(chunk)
 
                 while idx < chunk_len:
                     # Try to find longest match starting at idx
-                    # We pass the substring, but for performance we might want to pass full string + offset
-                    # Trie.longest_prefix currently takes a string.
-                    # Slicing is okay for Python.
                     sub = chunk[idx:]
-                    match_val, match_len = self.trie.longest_prefix(sub)
+                    match_val, match_len = self.fst.longest_match(sub)
 
                     if match_val:
                         result.append(match_val)

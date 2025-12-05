@@ -35,6 +35,10 @@ class Trie:
         last_match_len = 0
         current_len = 0
 
+        if node.is_end:
+            last_match_value = node.value
+            last_match_len = 0
+
         for char in text:
             if char not in node.children:
                 break
