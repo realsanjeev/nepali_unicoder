@@ -26,11 +26,11 @@ You can use the converter directly from the terminal:
 
 ```bash
 # Direct argument
-python -m nepali_unicoder.convert "namaste"
+python -m nepali_unicoder "namaste"
 # Output: नमस्ते
 
 # Pipe input
-echo "mero naam sanjeev ho" | python -m nepali_unicoder.convert
+echo "mero naam sanjeev ho" | python -m nepali_unicoder
 # Output: मेरो नाम सन्जीव् हो
 ```
 
@@ -58,6 +58,58 @@ print(converter.convert(mixed_text))
 - **Vowels**: `a` -> `अ`, `aa` -> `आ`, `i` -> `इ`, `u` -> `उ`
 - **Matras**: `ki` -> `कि`, `ko` -> `को`
 - **Special**: `.` -> `।`, `..` -> `॥`
+- **Numbers**: `0-9` -> `०-९` (Decimal points are preserved: `1.5` -> `१.५`)
+
+## Advanced Usage
+
+### Handling Complex Text
+
+The converter handles mixed content gracefully. You can use `{}` to keep text as-is (e.g., for English words or code snippets).
+
+```python
+text = "mero naam {Sanjeev} ho ra ma 12.5 barsa ko bhaye."
+print(converter.convert(text))
+# Output: मेरो नाम Sanjeev हो र म १२.५ बर्स को भए।
+```
+
+### Configuration
+
+The package uses two JSON files for configuration, located in the `src/nepali_unicoder` directory:
+
+1.  **`rules.json`**: Defines the core transliteration rules (consonants, vowels, matras, etc.).
+2.  **`word_maps.json`**: Defines custom word-level overrides. Use this for words that don't follow standard phonetic rules.
+
+Example `word_maps.json`:
+```json
+{
+    "nepal": "नेपाल",
+    "kathamandu": "काठमाडौँ"
+}
+```
+
+## Contribution
+
+We welcome contributions! Here's how you can help:
+
+1.  **Clone the repository**:
+    ```bash
+    git clone https://github.com/realsanjeev/nepali_unicoder.git
+    cd nepali_unicoder
+    ```
+
+2.  **Set up a virtual environment**:
+    ```bash
+    python3 -m venv .venv
+    source .venv/bin/activate
+    pip install -e .
+    ```
+
+3.  **Run tests**:
+    ```bash
+    python -m unittest discover tests
+    ```
+
+4.  **Submit a Pull Request**: Create a new branch, make your changes, and submit a PR.
 
 ## Development
 
