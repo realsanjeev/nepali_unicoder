@@ -5,14 +5,14 @@ from typing import List
 @dataclass
 class Token:
     value: str
-    type: str  # 'ROMAN', 'BLOCK', 'PUNCTUATION', 'UNKNOWN', 'LITERAL'
+    type: str  # 'ROMAN', 'BLOCK', 'PUNCTUATION', 'UNKNOWN', 'LITERAL', 'NUMBER'
 
 
 class Tokenizer:
     def tokenize(self, text: str) -> List[Token]:
         """
         Split text into tokens.
-        This simple tokenizer handles {blocks} and treats everything else as ROMAN for now.
+        This simple tokenizer handles {blocks}, numbers, and treats everything else as ROMAN for now.
         """
         tokens = []
         i = 0
@@ -42,10 +42,26 @@ class Tokenizer:
                 # Unmatched closing brace, treat as literal
                 tokens.append(Token(value="}", type="LITERAL"))
                 i += 1
+            elif text[i].isdigit():
+                # Start of a number
+                j = i
+                while j < n and text[j].isdigit():
+                    j += 1
+
+                # Check for decimal part
+                if j < n and text[j] == ".":
+                    # Look ahead to see if there are digits after dot
+                    if j + 1 < n and text[j + 1].isdigit():
+                        j += 1  # Consume dot
+                        while j < n and text[j].isdigit():
+                            j += 1
+
+                tokens.append(Token(value=text[i:j], type="NUMBER"))
+                i = j
             else:
                 # Accumulate Roman text
                 j = i
-                while j < n and text[j] not in "{}":
+                while j < n and text[j] not in "{}" and not text[j].isdigit():
                     j += 1
                 tokens.append(Token(value=text[i:j], type="ROMAN"))
                 i = j

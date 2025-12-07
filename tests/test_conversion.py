@@ -57,6 +57,8 @@ class TestNepaliUnicoder(unittest.TestCase):
         self.assertEqual(self.converter.convert("."), "।")
         self.assertEqual(self.converter.convert(".."), "॥")
         self.assertEqual(self.converter.convert("0123456789"), "०१२३४५६७८९")
+        # Decimal number test
+        self.assertEqual(self.converter.convert("123.34"), "१२३.३४")
 
     def test_as_is_block(self):
         self.assertEqual(self.converter.convert("{english}"), "english")

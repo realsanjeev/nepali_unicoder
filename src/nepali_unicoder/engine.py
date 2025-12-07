@@ -35,6 +35,18 @@ class Engine:
                 result.append(token.value)
             elif token.type == "LITERAL":
                 result.append(token.value)
+            elif token.type == "NUMBER":
+                # Process Number chunk: transliterate digits, keep others (like .) as is
+                for char in token.value:
+                    if char.isdigit():
+                        # Use Trie to find digit mapping (digits are single chars in rules)
+                        match_val, _ = self.trie.longest_match(char)
+                        if match_val:
+                            result.append(match_val)
+                        else:
+                            result.append(char)
+                    else:
+                        result.append(char)
             elif token.type == "ROMAN":
                 # Process Roman chunk with Trie
                 chunk = token.value
