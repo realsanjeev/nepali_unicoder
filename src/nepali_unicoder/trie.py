@@ -14,7 +14,7 @@ class Trie:
     def __init__(self):
         self.root = TrieNode()
 
-    def insert(self, key: str, value: str) -> None:
+    def add(self, key: str, value: str) -> None:
         """Insert a key-value pair into the Trie."""
         node = self.root
         for char in key:
@@ -24,7 +24,7 @@ class Trie:
         node.is_end = True
         node.value = value
 
-    def longest_prefix(self, text: str) -> Tuple[Optional[str], int]:
+    def longest_match(self, text: str) -> Tuple[Optional[str], int]:
         """
         Find the longest key in the Trie that matches the start of the text.
         Returns (value, length_of_match).
@@ -34,10 +34,6 @@ class Trie:
         last_match_value = None
         last_match_len = 0
         current_len = 0
-
-        if node.is_end:
-            last_match_value = node.value
-            last_match_len = 0
 
         for char in text:
             if char not in node.children:

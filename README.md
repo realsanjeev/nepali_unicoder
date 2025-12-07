@@ -7,7 +7,7 @@ A robust Python package for converting Romanized Nepali text into Devanagari scr
 - **Accurate Transliteration**: Uses a greedy matching algorithm to prioritize longer phonetic matches (e.g., 'kha' is matched before 'k' and 'h').
 - **Smart Vowel Handling**: Distinguishes between independent vowels (e.g., 'aa' -> 'आ') and vowel signs/matras (e.g., 'ka' -> 'क', 'kaa' -> 'का').
 - **Mixed Content Support**: Allows keeping English words or specific text in Roman script using `{}` blocks.
-- **Customizable**: Supports custom word-level overrides via `word_maps.txt`.
+- **Customizable**: Supports custom word-level overrides via `word_maps.json`.
 - **CLI Support**: Can be used directly from the command line.
 
 ## Installation
