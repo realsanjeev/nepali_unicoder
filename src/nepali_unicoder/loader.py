@@ -1,12 +1,12 @@
 import json
 import os
 
+from nepali_unicoder.rules import PREETI_TO_UNICODE_MAPPING, ROMAN_TO_UNICODE_RULES
 from nepali_unicoder.trie import Trie
 
 
 class RuleLoader:
     def __init__(self):
-        self.rules_path = os.path.join(os.path.dirname(__file__), "rules.json")
         self.word_maps_path = os.path.join(os.path.dirname(__file__), "word_maps.json")
 
     def load(self) -> Trie:
@@ -17,11 +17,7 @@ class RuleLoader:
         return trie
 
     def _load_rules(self, trie: Trie):
-        if not os.path.exists(self.rules_path):
-            raise FileNotFoundError(f"Rules file not found: {self.rules_path}")
-
-        with open(self.rules_path, "r", encoding="utf-8") as f:
-            data = json.load(f)
+        data = ROMAN_TO_UNICODE_RULES
 
         consonants = data.get("consonants", {})
         vowels = data.get("vowels", {})
@@ -70,3 +66,19 @@ class RuleLoader:
                     trie.add(roman.lower(), devanagari)
         except Exception as e:
             print(f"Error reading word_maps.json: {e}")
+
+
+class PreetiLoader:
+    def __init__(self):
+        pass
+
+    def load(self) -> Trie:
+        """Load Preeti rules into a Trie."""
+        trie = Trie()
+        data = PREETI_TO_UNICODE_MAPPING
+
+        mappings = data.get("mappings", {})
+        for key, value in mappings.items():
+            trie.add(key, value)
+
+        return trie

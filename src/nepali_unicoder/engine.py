@@ -1,16 +1,22 @@
 from typing import Optional
 
-from nepali_unicoder.loader import RuleLoader
+from nepali_unicoder.loader import PreetiLoader, RuleLoader
 from nepali_unicoder.tokenizer import Tokenizer
 from nepali_unicoder.trie import Trie
 
 
 class Engine:
     def __init__(
-        self, trie: Optional[Trie] = None, tokenizer: Optional[Tokenizer] = None
+        self,
+        trie: Optional[Trie] = None,
+        tokenizer: Optional[Tokenizer] = None,
+        mode: str = "roman",
     ):
         if trie is None:
-            loader = RuleLoader()
+            if mode == "preeti":
+                loader = PreetiLoader()
+            else:
+                loader = RuleLoader()
             self.trie = loader.load()
         else:
             self.trie = trie

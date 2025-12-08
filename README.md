@@ -73,11 +73,10 @@ print(converter.convert(text))
 ```
 
 ### Configuration
-
-The package uses two JSON files for configuration, located in the `src/nepali_unicoder` directory:
-
-1.  **`rules.json`**: Defines the core transliteration rules (consonants, vowels, matras, etc.).
-2.  **`word_maps.json`**: Defines custom word-level overrides. Use this for words that don't follow standard phonetic rules.
+ 
+ The package uses `word_maps.json` for custom word-level overrides, located in the `src/nepali_unicoder` directory.
+ 
+ 1.  **`word_maps.json`**: Defines custom word-level overrides. Use this for words that don't follow standard phonetic rules.
 
 Example `word_maps.json`:
 ```json
