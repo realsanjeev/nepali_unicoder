@@ -42,3 +42,68 @@ This is critical for transliteration. When converting `kha`, we want `kha` -> `�
 ## References
 - [Trie - Wikipedia](https://en.wikipedia.org/wiki/Trie)
 - [Trie - GeeksforGeeks](https://www.geeksforgeeks.org/trie/)
+
+---
+
+# Preeti Conversion Architecture
+
+The Preeti to Unicode conversion uses a **two-phase approach** to handle the complex contextual rules required for accurate conversion.
+
+## Phase 1: Character Mapping
+
+Similar to Roman transliteration, Preeti characters are first mapped using the Trie structure:
+- Input: Preeti characters (e.g., `s`, `{`, `l`)
+- Trie lookup: Direct character-to-Unicode mapping
+- Output: Initial Unicode text (may be incorrect due to lack of context)
+
+Example:
+```
+Input:  s{
+Trie:   s → क, { → {
+Output: क{
+```
+
+## Phase 2: Post-Processing Rules
+
+After initial mapping, **30 regex-based post-processing rules** are applied in sequence to handle contextual transformations:
+
+### Rule Categories
+
+1. **Invalid Combination Removal**: Remove impossible character sequences
+2. **Contextual `m` Handling**: Transform `m` based on surrounding characters
+   - `त्रm` → `क्र`, `त्तm` → `क्त`
+   - `उm` → `ऊ`, `भm` → `झ`, `पm` → `फ`
+3. **Reph (`{`) Positioning**: Move reph to correct position
+   - `(.[ािीुूृेैोौंःँ]*?){` → `{\1` (move before matras)
+   - `{` → `र्` (final conversion)
+4. **Matra Reordering**: Reposition vowel signs
+   - `ि((.्)*[^्])` → `\1ि` (move short i after consonant)
+5. **Anusvara/Chandrabindu**: Move to end of character cluster
+6. **Duplicate Removal**: Remove duplicate matras
+7. **Visarga Handling**: Special handling for visarga at line start
+8. **Special Combinations**: Handle specific character combinations
+9. **Vowel Combinations**: Combine vowel signs with independent vowels
+
+### Example Flow
+
+```
+Input:     s{
+Phase 1:   क{
+Rule 3.3:  {क  (move { before matras)
+Rule 3.4:  र्क (convert { to र्)
+Output:    र्क
+```
+
+## Why Two Phases?
+
+Preeti font is a **visual encoding** where characters don't follow Unicode's logical ordering. For example:
+- Reph (`र्`) appears **above** a consonant but is typed **after** it in Preeti
+- Short i matra (`ि`) appears **before** a consonant but is typed **after** it in Preeti
+
+The post-processing phase reorders these characters to match Unicode's logical structure.
+
+## Performance Considerations
+
+- **Phase 1**: O(L) where L is input length (Trie lookup)
+- **Phase 2**: O(L × R) where R is number of rules (30 regex passes)
+- Total: Still very fast for typical text lengths

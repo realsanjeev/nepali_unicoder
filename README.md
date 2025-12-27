@@ -1,11 +1,13 @@
 # Nepali Unicoder
 
-A robust Python package for converting Romanized Nepali text into Devanagari script. It uses a greedy matching algorithm to ensure accurate transliteration and supports custom word mappings and "as-is" blocks for English text.
+A robust Python package for converting Romanized Nepali text and Preeti font text into Unicode Devanagari script. It uses a greedy matching algorithm for Roman transliteration and a two-phase conversion process for Preeti with contextual rules.
 
 ## Features
 
 - **Accurate Transliteration**: Uses a greedy matching algorithm to prioritize longer phonetic matches (e.g., 'kha' is matched before 'k' and 'h').
+- **Preeti Font Support**: Full support for Preeti to Unicode conversion with 30+ contextual rules for accurate transformation.
 - **Smart Vowel Handling**: Distinguishes between independent vowels (e.g., 'aa' -> 'आ') and vowel signs/matras (e.g., 'ka' -> 'क', 'kaa' -> 'का').
+- **Contextual Rules**: Handles complex Devanagari rules like reph positioning, matra reordering, and special character combinations.
 - **Mixed Content Support**: Allows keeping English words or specific text in Roman script using `{}` blocks.
 - **Customizable**: Supports custom word-level overrides via `word_maps.json`.
 - **CLI Support**: Can be used directly from the command line.
@@ -51,6 +53,46 @@ mixed_text = "mero naam {Sanjeev} ho"
 print(converter.convert(mixed_text))
 # Output: मेरो नाम Sanjeev हो
 ```
+
+### Preeti Mode
+
+Convert Preeti font text to Unicode with full support for contextual rules:
+
+```python
+from nepali_unicoder import Converter
+
+# Create converter in Preeti mode
+preeti_converter = Converter(mode="preeti")
+
+# Basic conversion
+preeti_text = "s{sf"  # Preeti characters
+print(preeti_converter.convert(preeti_text))
+# Output: र्कर्का
+
+# The converter handles:
+# - Reph positioning: { → र् (moves before consonant)
+# - Matra reordering: l (ि) moves after consonant
+# - Special m transformations
+# - Vowel combinations
+```
+
+#### Preeti Character Examples
+
+| Preeti | Unicode | Description |
+|--------|---------|-------------|
+| `s` | `क` | Consonant ka |
+| `s{` | `र्क` | Reph + ka (contextual) |
+| `sl` | `कि` | ka + short i (reordered) |
+| `qm` | `क्र` | Special m transformation |
+| `!@#` | `१२३` | Nepali numbers |
+
+#### CLI for Preeti
+
+```bash
+python -m nepali_unicoder --preeti "s{sf"
+# Output: र्कर्का
+```
+
 
 ## Transliteration Rules
 

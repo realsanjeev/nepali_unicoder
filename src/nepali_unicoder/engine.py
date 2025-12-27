@@ -1,6 +1,8 @@
+import re
 from typing import Optional
 
 from nepali_unicoder.loader import PreetiLoader, RuleLoader
+from nepali_unicoder.rules import PREETI_TO_UNICODE_MAPPING
 from nepali_unicoder.tokenizer import Tokenizer
 from nepali_unicoder.trie import Trie
 
@@ -12,9 +14,14 @@ class Engine:
         tokenizer: Optional[Tokenizer] = None,
         mode: str = "roman",
     ):
+        self.mode = mode
+        self.post_rules = []
+
         if trie is None:
             if mode == "preeti":
                 loader = PreetiLoader()
+                # Load post-processing rules for Preeti mode
+                self.post_rules = PREETI_TO_UNICODE_MAPPING.get("post_rules", [])
             else:
                 loader = RuleLoader()
             self.trie = loader.load()
@@ -72,4 +79,19 @@ class Engine:
                         result.append(chunk[idx])
                         idx += 1
 
-        return "".join(result)
+        output = "".join(result)
+
+        # Apply post-processing rules for Preeti mode
+        if self.mode == "preeti" and self.post_rules:
+            output = self._apply_post_rules(output)
+
+        return output
+
+    def _apply_post_rules(self, text: str) -> str:
+        """
+        Apply post-processing rules (regex replacements) to the text.
+        Used for Preeti mode to handle contextual transformations.
+        """
+        for pattern, replacement in self.post_rules:
+            text = re.sub(pattern, replacement, text)
+        return text
