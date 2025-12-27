@@ -109,6 +109,7 @@ class TestPreetiUnicoder(unittest.TestCase):
         self.assertEqual(self.converter.convert("s{"), "र्क")
         # More complex: sf{ should become र्का
         self.assertEqual(self.converter.convert("sf{"), "र्का")
+        self.assertEqual(self.converter.convert("s{sf"), "र्कका")
 
     def test_matra_reordering(self):
         """Test that matras (vowel signs) are correctly reordered"""

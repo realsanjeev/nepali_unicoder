@@ -39,7 +39,7 @@ echo "mero naam sanjeev ho" | python -m nepali_unicoder
 ### Python API
 
 ```python
-from nepali_unicoder import Converter
+from nepali_unicoder.convert import Converter
 
 converter = Converter()
 
@@ -59,7 +59,7 @@ print(converter.convert(mixed_text))
 Convert Preeti font text to Unicode with full support for contextual rules:
 
 ```python
-from nepali_unicoder import Converter
+from nepali_unicoder.convert import Converter
 
 # Create converter in Preeti mode
 preeti_converter = Converter(mode="preeti")
@@ -162,4 +162,4 @@ python -m unittest discover tests
 
 ## License
 
-MIT
+[MIT](./LICENSE)
