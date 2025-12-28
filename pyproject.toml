@@ -4,21 +4,28 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "nepali_unicoder"
-version = "0.1.0"
+version = "0.1.1"
 description = "A Python package for Roman to Nepali (Devanagari) transliteration"
 authors = [
   { name="realsanjeev", email="075bei033.sanjeev@pcampus.edu.np" },
 ]
 readme = "README.md"
+license = "MIT"
 requires-python = ">=3.7"
+dependencies = []
 classifiers = [
+    "Programming Language :: Python",
     "Programming Language :: Python :: 3",
-    "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
 ]
+keywords = ["nepali", "unicoder", "roman to devanagari", "nepali transliteration", "preeti to unicode"]
+
 
 [project.urls]
 "Homepage" = "https://github.com/realsanjeev/nepali_unicoder"
+
+[project.optional-dependencies]
+dev = ["pre-commit"]
 
 [tool.pytest.ini_options]
 pythonpath = [
@@ -27,5 +34,3 @@ pythonpath = [
 testpaths = [
     "tests",
 ]
-
-# TODO(realsanjeev): Add the dev dependencies like pre-commit
