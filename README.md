@@ -17,7 +17,7 @@ A robust Python package for converting Romanized Nepali text and Preeti font tex
 You can install the package locally:
 
 ```bash
-pip install .
+pip install nepali-unicoder
 ```
 
 ## Usage
