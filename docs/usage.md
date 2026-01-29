@@ -46,8 +46,8 @@ print(converter.convert(text))
 # Output: मेरो name सन्जीव् हो।
 ```
 
-> [!NOTE]
-> In **Preeti mode**, the curly braces `{` and `}` are treated as normal characters because they are part of the Preeti font mapping.
+!!! note "English Preservation"
+    In **Preeti mode**, the curly braces `{` and `}` are treated as normal characters because they are part of the Preeti font mapping.
 
 ## Command Line Interface
 

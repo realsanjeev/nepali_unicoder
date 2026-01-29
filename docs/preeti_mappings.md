@@ -64,17 +64,28 @@ This document provides a comprehensive list of Preeti character mappings and the
 
 ## Contextual Rules
 
-The conversion engine applies several post-processing rules to handle the complexities of Devanagari script:
+The conversion engine applies several post-processing rules to handle the complexities of Devanagari script.
 
-1.  **Reph Positioning**: The character `{` (ර්) is moved before the preceding consonant cluster.
-2.  **Matra Reordering**: The short-i matra (`l` / `ि`) is moved after the consonant cluster it modifies.
-3.  **M-Transformations**:
-    *   `त्रm` → `क्र`
-    *   `त्तm` → `क्त`
-    *   `उm` → `ऊ`
-    *   `भm` → `झ`
-    *   `पm` → `फ`
-4.  **Vowel Combinations**:
-    *   `अ` + `ा` + `े` → `ओ`
-    *   `अ` + `ा` + `ै` → `औ`
-    *   `अ` + `ा` → `आ`
+??? abstract "Rule: Reph Positioning"
+    The character `{` (ර්) is moved before the preceding consonant cluster.
+    
+    *   `s{` &rarr; `र्क`
+
+??? abstract "Rule: Matra Reordering"
+    The short-i matra (`l` / `ि`) is moved after the consonant cluster it modifies.
+    
+    *   `sl` &rarr; `कि`
+
+??? abstract "Rule: M-Transformations"
+    Special transformations for the `m` character:
+    
+    *   `त्रm` &rarr; `क्र`
+    *   `त्तm` &rarr; `क्त`
+    *   `उm` &rarr; `ऊ`
+    *   `भm` &rarr; `झ`
+    *   `पm` &rarr; `फ`
+
+??? abstract "Rule: Vowel Combinations"
+    *   `अ` + `ा` + `े` &rarr; `ओ`
+    *   `अ` + `ा` + `ै` &rarr; `औ`
+    *   `अ` + `ा` &rarr; `आ`
