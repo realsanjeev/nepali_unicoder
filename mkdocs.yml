@@ -1,0 +1,77 @@
+site_name: Nepali Unicoder
+site_description: A Python package for Romanized Nepali and Preeti to Unicode Devanagari conversion.
+site_url: https://realsanjeev.github.io/nepali_unicoder/
+repo_url: https://github.com/realsanjeev/nepali_unicoder
+repo_name: realsanjeev/nepali_unicoder
+edit_uri: edit/main/docs/
+
+theme:
+  name: material
+  logo: material/translate
+  favicon: material/translate
+  font:
+    text: Inter
+    code: JetBrains Mono
+  palette:
+    # Palette toggle for light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+
+    # Palette toggle for dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.tabs
+    - navigation.top
+    - navigation.tracking
+    - navigation.sections
+    - navigation.indexes
+    - search.suggest
+    - search.highlight
+    - search.share
+    - content.code.copy
+    - content.code.annotate
+
+markdown_extensions:
+  - admonition
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.details
+  - pymdownx.magiclink
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.tilde
+  - toc:
+      permalink: true
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/realsanjeev
+    - icon: fontawesome/brands/python
+      link: https://pypi.org/project/nepali-unicoder/
+
+nav:
+  - Home: index.md
+  - Usage Guide: usage.md
+  - Preeti Mappings: preeti_mappings.md
+  - API Reference: api_reference.md

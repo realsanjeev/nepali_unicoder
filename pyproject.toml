@@ -26,7 +26,11 @@ keywords = ["nepali", "unicoder", "roman to devanagari", "nepali transliteration
 "Bug Tracker" = "https://github.com/realsanjeev/nepali_unicoder/issues"
 
 [project.optional-dependencies]
-dev = ["pre-commit"]
+dev = [
+    "pre-commit",
+    "mkdocs",
+    "mkdocs-material"
+]
 
 [tool.pytest.ini_options]
 pythonpath = [
