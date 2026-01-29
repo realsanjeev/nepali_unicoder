@@ -23,6 +23,7 @@ keywords = ["nepali", "unicoder", "roman to devanagari", "nepali transliteration
 
 [project.urls]
 "Homepage" = "https://github.com/realsanjeev/nepali_unicoder"
+"Documentation" = "https://realsanjeev.github.io/nepali_unicoder/"
 "Bug Tracker" = "https://github.com/realsanjeev/nepali_unicoder/issues"
 
 [project.optional-dependencies]
