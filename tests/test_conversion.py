@@ -82,13 +82,17 @@ class TestPreetiUnicoder(unittest.TestCase):
         self.converter = Converter(mode="preeti")
 
     def test_qwerty_alphabet(self):
-        # Basic consonants from Preeti mapping
-        # self.assertEqual(self.converter.convert("qwertyuiop QWERTYUIOP"), "त्रधभचतथगष्यउ त्तध्भ्च्त्थ्ग्क्ष्इए")
+        """Basic character mappings (a-z, A-Z)"""
         self.assertEqual(
             self.converter.convert("q w e r t y u i o p Q W E R T Y U I O P"),
             "त्र ध भ च त थ ग ष् य उ त्त ध् भ् च् त् थ् ग् क्ष् इ ए",
         )
-        pass
+
+    def test_additional_consonants(self):
+        """Additional consonants outside a-z range"""
+        self.assertEqual(self.converter.convert("ª"), "ङ")
+        self.assertEqual(self.converter.convert("`"), "ञ")
+        self.assertEqual(self.converter.convert("~"), "ञ्")
 
     def test_arabic_numbers(self):
         self.assertEqual(self.converter.convert("0123456789"), "ण्ज्ञद्दघद्धछटठडढ")
@@ -98,9 +102,15 @@ class TestPreetiUnicoder(unittest.TestCase):
         self.assertEqual(self.converter.convert("!@#$%^&*()"), "१२३४५६७८९०")
 
     def test_special_characters_to_unicoder(self):
-        # Special characters
-        # self.assertEqual(self.converter.convert("[]\\;',./{}|:\"<>?"), "ृे्सु,।र्रै्रस्ू?श्ररु")
-        pass
+        """Punctuation and special symbol mappings"""
+        self.assertEqual(self.converter.convert("Ù"), ";")
+        self.assertEqual(self.converter.convert("Ú"), ":")
+        self.assertEqual(self.converter.convert("æ"), "“")
+        self.assertEqual(self.converter.convert("Æ"), "”")
+        self.assertEqual(self.converter.convert("."), "।")
+        self.assertEqual(self.converter.convert("="), ".")
+        self.assertEqual(self.converter.convert("+"), "ं")
+        self.assertEqual(self.converter.convert("F"), "ँ")
 
     def test_reph_positioning(self):
         """Test that { (reph) is correctly positioned"""
@@ -132,13 +142,31 @@ class TestPreetiUnicoder(unittest.TestCase):
         # km should become फ (प + m = फ)
         self.assertEqual(self.converter.convert("km"), "फ")
 
+    def test_combined_and_half_forms(self):
+        """Test special combined and half form mappings"""
+        self.assertEqual(self.converter.convert("«"), "्र")
+        self.assertEqual(self.converter.convert("»"), "्र")
+        self.assertEqual(self.converter.convert("¿"), "रू")
+        self.assertEqual(self.converter.convert("å"), "द्व")
+        self.assertEqual(self.converter.convert("ˆ"), "फ्")
+        self.assertEqual(self.converter.convert("¶"), "ठ्ठ")
+        self.assertEqual(self.converter.convert("¥"), "र्")
+
     def test_complex_words(self):
         """Test complex words with multiple contextual rules"""
-        # Test word with reph and matras
-        # This would need actual Preeti text examples
         self.assertEqual(self.converter.convert("k|L"), "प्री")
         self.assertEqual(self.converter.convert("ef}"), "भौ")
         self.assertEqual(self.converter.convert("hgtfÙ"), "जनता;")
+        self.assertEqual(self.converter.convert("/fli6«o"), "राष्ट्रिय")
+        self.assertEqual(self.converter.convert("zxLbx¿"), "शहीदहरू")
+        self.assertEqual(self.converter.convert("dfWodåf/f"), "माध्यमद्वारा")
+        self.assertEqual(self.converter.convert("cfˆgf]"), "आफ्नो")
+        self.assertEqual(
+            self.converter.convert("nflu æwd{lg/k]IfÆ"), "लागि “धर्मनिरपेक्ष”"
+        )
+        self.assertEqual(self.converter.convert("k'¥ofpg]"), "पुर्याउने")
+        self.assertEqual(self.converter.convert("k}+;¶L"), "पैंसठ्ठी")
+        self.assertEqual(self.converter.convert("kbfjlw"), "पदावधि")
 
     def test_duplicate_removal(self):
         """Test that duplicate matras are removed"""
