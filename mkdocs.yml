@@ -7,8 +7,9 @@ edit_uri: edit/main/docs/
 
 theme:
   name: material
-  logo: material/translate
-  favicon: material/translate
+  icon:
+    logo: material/translate
+    favicon: material/translate
   font:
     text: Inter
     code: JetBrains Mono
@@ -43,6 +44,8 @@ theme:
     - content.code.annotate
 
 markdown_extensions:
+  - attr_list
+  - md_in_html
   - admonition
   - pymdownx.highlight:
       anchor_linenums: true
