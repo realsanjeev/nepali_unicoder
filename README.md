@@ -1,6 +1,11 @@
 # Nepali Unicoder
 
+[![Documentation](https://img.shields.io/badge/docs-GitHub%20Pages-blue)](https://realsanjeev.github.io/nepali_unicoder/)
+[![PyPI version](https://badge.fury.io/py/nepali-unicoder.svg)](https://pypi.org/project/nepali-unicoder/)
+
 A robust Python package for converting Romanized Nepali text and Preeti font text into Unicode Devanagari script. It uses a greedy matching algorithm for Roman transliteration and a two-phase conversion process for Preeti with contextual rules.
+
+Read the **[Full Documentation](https://realsanjeev.github.io/nepali_unicoder/)** for detailed usage guides, Preeti mapping references, and API details.
 
 ## Features
 
