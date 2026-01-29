@@ -136,7 +136,8 @@ class TestPreetiUnicoder(unittest.TestCase):
         """Test complex words with multiple contextual rules"""
         # Test word with reph and matras
         # This would need actual Preeti text examples
-        pass
+        self.assertEqual(self.converter.convert("k|L"), "प्री")
+        self.assertEqual(self.converter.convert("ef}"), "भौ")
 
     def test_duplicate_removal(self):
         """Test that duplicate matras are removed"""

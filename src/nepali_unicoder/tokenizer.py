@@ -9,17 +9,18 @@ class Token:
 
 
 class Tokenizer:
-    def tokenize(self, text: str) -> List[Token]:
+    def tokenize(self, text: str, use_blocks: bool = True) -> List[Token]:
         """
         Split text into tokens.
         This simple tokenizer handles {blocks}, numbers, and treats everything else as ROMAN for now.
+        If use_blocks is False, { and } are treated as normal characters.
         """
         tokens = []
         i = 0
         n = len(text)
 
         while i < n:
-            if text[i] == "{":
+            if use_blocks and text[i] == "{":
                 # Check for escape {{
                 if i + 1 < n and text[i + 1] == "{":
                     # Actually, if it's escaped, it should probably be treated as a literal '{' in the output.
@@ -38,7 +39,7 @@ class Tokenizer:
                     else:  # Unclosed brace, treat as literal
                         tokens.append(Token(value="{", type="LITERAL"))
                         i += 1
-            elif text[i] == "}":
+            elif use_blocks and text[i] == "}":
                 # Unmatched closing brace, treat as literal
                 tokens.append(Token(value="}", type="LITERAL"))
                 i += 1
@@ -61,7 +62,11 @@ class Tokenizer:
             else:
                 # Accumulate Roman text
                 j = i
-                while j < n and text[j] not in "{}" and not text[j].isdigit():
+                while (
+                    j < n
+                    and (not use_blocks or text[j] not in "{}")
+                    and not text[j].isdigit()
+                ):
                     j += 1
                 tokens.append(Token(value=text[i:j], type="ROMAN"))
                 i = j

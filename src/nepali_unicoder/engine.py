@@ -40,7 +40,8 @@ class Engine:
         if not text:
             return ""
 
-        tokens = self.tokenizer.tokenize(text)
+        use_blocks = self.mode != "preeti"
+        tokens = self.tokenizer.tokenize(text, use_blocks=use_blocks)
         result = []
 
         for token in tokens:
