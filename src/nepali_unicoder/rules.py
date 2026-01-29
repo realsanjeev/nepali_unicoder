@@ -107,6 +107,9 @@ PREETI_TO_UNICODE_MAPPING = {
         "¿": "रू",
         "å": "द्व",
         "ˆ": "फ्",
+        "ª": "ङ",
+        "æ": "“",
+        "Æ": "”",
     },
     # Post-processing rules applied after character mapping
     # Format: [pattern, replacement] - applied in order using regex
