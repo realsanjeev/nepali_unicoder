@@ -112,6 +112,11 @@ PREETI_TO_UNICODE_MAPPING = {
         "Æ": "”",
         "¥": "र्",
         "¶": "ठ्ठ",
+        "§": "ट्ट",
+        "£": "घ्",
+        "Ë": "ङ्ग",
+        "Í": "ङ्क",
+        "‰": "झ्",
     },
     # Post-processing rules applied after character mapping
     # Format: [pattern, replacement] - applied in order using regex
