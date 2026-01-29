@@ -74,6 +74,7 @@ print(preeti_converter.convert(preeti_text))
 # - Matra reordering: l (ि) moves after consonant
 # - Special m transformations
 # - Vowel combinations
+# - Literal brackets: { and } are treated as normal characters in Preeti mode
 ```
 
 #### Preeti Character Examples
@@ -85,6 +86,19 @@ print(preeti_converter.convert(preeti_text))
 | `sl` | `कि` | ka + short i (reordered) |
 | `qm` | `क्र` | Special m transformation |
 | `!@#` | `१२३` | Nepali numbers |
+| `Ù` / `Ú` | `;` / `:` | Literal punctuation |
+| `«` / `»` | `्र` | Ra-foot (for ट, ठ, ड, ढ) |
+| `¿` | `रू` | Combined ruu |
+| `å` | `द्व` | Combined dva |
+| `ˆ` | `फ्` | Half ph |
+| `ª` | `ङ` | Consonant nga |
+| `æ` / `Æ` | `“` / `”` | Curly quotes |
+| `¥` | `र्` | Half ra |
+| `¶` | `ठ्ठ` | Combined thth |
+| `§` | `ट्ट` | Combined tt |
+| `£` | `घ्` | Half gh |
+| `Ë` / `Í` | `ङ्ग` / `ङ्क` | Combined nga-ga / nga-ka |
+| `‰` | `झ्` | Half jh |
 
 #### CLI for Preeti
 

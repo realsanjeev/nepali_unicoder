@@ -151,6 +151,11 @@ class TestPreetiUnicoder(unittest.TestCase):
         self.assertEqual(self.converter.convert("ˆ"), "फ्")
         self.assertEqual(self.converter.convert("¶"), "ठ्ठ")
         self.assertEqual(self.converter.convert("¥"), "र्")
+        self.assertEqual(self.converter.convert("§"), "ट्ट")
+        self.assertEqual(self.converter.convert("£"), "घ्")
+        self.assertEqual(self.converter.convert("Ë"), "ङ्ग")
+        self.assertEqual(self.converter.convert("Í"), "ङ्क")
+        self.assertEqual(self.converter.convert("‰"), "झ्")
 
     def test_complex_words(self):
         """Test complex words with multiple contextual rules"""
@@ -167,6 +172,16 @@ class TestPreetiUnicoder(unittest.TestCase):
         self.assertEqual(self.converter.convert("k'¥ofpg]"), "पुर्याउने")
         self.assertEqual(self.converter.convert("k}+;¶L"), "पैंसठ्ठी")
         self.assertEqual(self.converter.convert("kbfjlw"), "पदावधि")
+        self.assertEqual(self.converter.convert("kl§"), "पट्टि")
+        self.assertEqual(self.converter.convert("lj£g"), "विघ्न")
+        self.assertEqual(self.converter.convert("k§Ldf"), "पट्टीमा")
+        self.assertEqual(self.converter.convert("k§L"), "पट्टी")
+        self.assertEqual(self.converter.convert("k|;Ën]"), "प्रसङ्गले")
+        self.assertEqual(self.converter.convert("cglÍt"), "अनङ्कित")
+        self.assertEqual(self.converter.convert("a'‰g],"), "बुझ्ने,")
+        self.assertEqual(self.converter.convert(";ËLtsf]"), "सङ्गीतको")
+        self.assertEqual(self.converter.convert("5'§}"), "छुट्टै")
+        self.assertEqual(self.converter.convert("5'§f5'§}"), "छुट्टाछुट्टै")
 
     def test_duplicate_removal(self):
         """Test that duplicate matras are removed"""
