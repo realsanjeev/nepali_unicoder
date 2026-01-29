@@ -140,6 +140,7 @@ class TestPreetiUnicoder(unittest.TestCase):
         self.assertEqual(self.converter.convert("ef}"), "भौ")
         self.assertEqual(self.converter.convert("hgtfÙ"), "जनता;")
         self.assertEqual(self.converter.convert("/fli6«o"), "राष्ट्रिय")
+        self.assertEqual(self.converter.convert("zxLbx¿"), "शहीदहरू")
 
     def test_duplicate_removal(self):
         """Test that duplicate matras are removed"""

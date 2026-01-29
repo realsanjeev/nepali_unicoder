@@ -104,6 +104,7 @@ PREETI_TO_UNICODE_MAPPING = {
         "Ú": ":",
         "«": "्र",
         "»": "्र",
+        "¿": "रू",
     },
     # Post-processing rules applied after character mapping
     # Format: [pattern, replacement] - applied in order using regex
