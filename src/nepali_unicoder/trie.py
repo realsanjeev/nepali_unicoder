@@ -24,7 +24,9 @@ class Trie:
         node.is_end = True
         node.value = value
 
-    def longest_match(self, text: str) -> Tuple[Optional[str], int]:
+    def longest_match(
+        self, text: str, start_index: int = 0
+    ) -> Tuple[Optional[str], int]:
         """
         Find the longest key in the Trie that matches the start of the text.
         Returns (value, length_of_match).
@@ -34,12 +36,16 @@ class Trie:
         last_match_value = None
         last_match_len = 0
         current_len = 0
+        n = len(text)
+        i = start_index
 
-        for char in text:
+        while i < n:
+            char = text[i]
             if char not in node.children:
                 break
             node = node.children[char]
             current_len += 1
+            i += 1
             if node.is_end:
                 last_match_value = node.value
                 last_match_len = current_len

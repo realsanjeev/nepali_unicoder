@@ -72,8 +72,8 @@ class Engine:
 
                 while idx < chunk_len:
                     # Try to find longest match starting at idx
-                    sub = chunk[idx:]
-                    match_val, match_len = self.trie.longest_match(sub)
+                    # Pass chunk and idx directly to avoid slicing
+                    match_val, match_len = self.trie.longest_match(chunk, idx)
 
                     if match_val:
                         result.append(match_val)
