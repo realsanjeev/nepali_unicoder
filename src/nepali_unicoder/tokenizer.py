@@ -11,64 +11,75 @@ class Token:
 class Tokenizer:
     def tokenize(self, text: str, use_blocks: bool = True) -> List[Token]:
         """
-        Split text into tokens.
-        This simple tokenizer handles {blocks}, numbers, and treats everything else as ROMAN for now.
-        If use_blocks is False, { and } are treated as normal characters.
+        Split text into tokens using regex-based matching for robustness.
         """
+        import re
+
         tokens = []
         i = 0
         n = len(text)
+        roman_buffer = []
+
+        # Pre-compile regexes
+        # Note: re.match checks from the beginning of the string (or at pos)
+        re_block = re.compile(r"\{([^}]*)\}")
+        re_number = re.compile(r"\d+(\.\d+)?")
+
+        def flush_roman():
+            if roman_buffer:
+                tokens.append(Token(value="".join(roman_buffer), type="ROMAN"))
+                roman_buffer.clear()
 
         while i < n:
-            if use_blocks and text[i] == "{":
-                # Check for escape {{
-                if i + 1 < n and text[i + 1] == "{":
-                    # Actually, if it's escaped, it should probably be treated as a literal '{' in the output.
+            # 1. Check for Ellipsis (Priority)
+            if text.startswith("...", i):
+                flush_roman()
+                tokens.append(Token(value="...", type="LITERAL"))
+                i += 3
+                continue
+
+            # 2. Check for Blocks and Braces (if enabled)
+            if use_blocks:
+                # Escaped brace {{
+                if text.startswith("{{", i):
+                    flush_roman()
                     tokens.append(Token(value="{", type="LITERAL"))
                     i += 2
-                else:
-                    # Start of block
-                    j = i + 1
-                    while j < n and text[j] != "}":
-                        j += 1
+                    continue
 
-                    if j < n:  # Found closing brace
-                        content = text[i + 1 : j]
-                        tokens.append(Token(value=content, type="BLOCK"))
-                        i = j + 1
-                    else:  # Unclosed brace, treat as literal
-                        tokens.append(Token(value="{", type="LITERAL"))
-                        i += 1
-            elif use_blocks and text[i] == "}":
-                # Unmatched closing brace, treat as literal
-                tokens.append(Token(value="}", type="LITERAL"))
-                i += 1
-            elif text[i].isdigit():
-                # Start of a number
-                j = i
-                while j < n and text[j].isdigit():
-                    j += 1
+                # Block {content}
+                match_block = re_block.match(text, i)
+                if match_block:
+                    flush_roman()
+                    tokens.append(Token(value=match_block.group(1), type="BLOCK"))
+                    i = match_block.end()
+                    continue
 
-                # Check for decimal part
-                if j < n and text[j] == ".":
-                    # Look ahead to see if there are digits after dot
-                    if j + 1 < n and text[j + 1].isdigit():
-                        j += 1  # Consume dot
-                        while j < n and text[j].isdigit():
-                            j += 1
+                # Unmatched closing brace }
+                if text.startswith("}", i):
+                    flush_roman()
+                    tokens.append(Token(value="}", type="LITERAL"))
+                    i += 1
+                    continue
 
-                tokens.append(Token(value=text[i:j], type="NUMBER"))
-                i = j
-            else:
-                # Accumulate Roman text
-                j = i
-                while (
-                    j < n
-                    and (not use_blocks or text[j] not in "{}")
-                    and not text[j].isdigit()
-                ):
-                    j += 1
-                tokens.append(Token(value=text[i:j], type="ROMAN"))
-                i = j
+                # Unmatched opening brace {
+                if text.startswith("{", i):
+                    flush_roman()
+                    tokens.append(Token(value="{", type="LITERAL"))
+                    i += 1
+                    continue
 
+            # 3. Check for Numbers
+            match_number = re_number.match(text, i)
+            if match_number:
+                flush_roman()
+                tokens.append(Token(value=match_number.group(0), type="NUMBER"))
+                i = match_number.end()
+                continue
+
+            # 4. Fallback: Accumulate Roman
+            roman_buffer.append(text[i])
+            i += 1
+
+        flush_roman()
         return tokens
