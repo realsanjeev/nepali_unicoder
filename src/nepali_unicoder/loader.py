@@ -1,13 +1,24 @@
 import json
 import os
 
-from nepali_unicoder.rules import PREETI_TO_UNICODE_MAPPING, ROMAN_TO_UNICODE_RULES
 from nepali_unicoder.trie import Trie
+
+
+def load_json_data(filename):
+    path = os.path.join(os.path.dirname(__file__), "data", filename)
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except FileNotFoundError:
+        print(f"Warning: Rule file {filename} not found.")
+        return {}
 
 
 class RuleLoader:
     def __init__(self):
-        self.word_maps_path = os.path.join(os.path.dirname(__file__), "word_maps.json")
+        self.word_maps_path = os.path.join(
+            os.path.dirname(__file__), "data", "word_maps.json"
+        )
 
     def load(self) -> Trie:
         """Load rules and custom mappings into a Trie."""
@@ -17,7 +28,7 @@ class RuleLoader:
         return trie
 
     def _load_rules(self, trie: Trie):
-        data = ROMAN_TO_UNICODE_RULES
+        data = load_json_data("roman_rules.json")
 
         consonants = data.get("consonants", {})
         vowels = data.get("vowels", {})
@@ -75,10 +86,14 @@ class PreetiLoader:
     def load(self) -> Trie:
         """Load Preeti rules into a Trie."""
         trie = Trie()
-        data = PREETI_TO_UNICODE_MAPPING
+        data = load_json_data("preeti_rules.json")
 
         mappings = data.get("mappings", {})
         for key, value in mappings.items():
             trie.add(key, value)
 
         return trie
+
+    def get_post_rules(self):
+        data = load_json_data("preeti_rules.json")
+        return data.get("post_rules", [])

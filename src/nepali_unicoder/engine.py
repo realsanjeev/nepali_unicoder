@@ -2,7 +2,6 @@ import re
 from typing import Optional
 
 from nepali_unicoder.loader import PreetiLoader, RuleLoader
-from nepali_unicoder.rules import PREETI_TO_UNICODE_MAPPING
 from nepali_unicoder.tokenizer import Tokenizer
 from nepali_unicoder.trie import Trie
 
@@ -21,7 +20,7 @@ class Engine:
             if mode == "preeti":
                 loader = PreetiLoader()
                 # Load post-processing rules for Preeti mode
-                self.post_rules = PREETI_TO_UNICODE_MAPPING.get("post_rules", [])
+                self.post_rules = loader.get_post_rules()
             else:
                 loader = RuleLoader()
             self.trie = loader.load()

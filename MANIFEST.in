@@ -1,1 +1,2 @@
 include src/nepali_unicoder/*.json
+recursive-include src/nepali_unicoder/data *.json
