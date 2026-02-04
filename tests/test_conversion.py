@@ -186,8 +186,21 @@ class TestPreetiUnicoder(unittest.TestCase):
     def test_duplicate_removal(self):
         """Test that duplicate matras are removed"""
         # The post-rules should remove duplicate matras
-        # This is handled automatically by post-processing
-        pass
+        # Example: sLL -> कीी -> की
+        # Example: s{{ -> र्र्क -> र्क (Wait, { is reph, handled differently)
+        # Let's test the specific matras:
+        # ँँ -> ँ
+        self.assertEqual(self.converter.convert("FF"), "ँ")
+        # ंं -> ं
+        self.assertEqual(self.converter.convert("++"), "ं")
+        # ेे -> े
+        self.assertEqual(self.converter.convert("]]"), "े")
+        # ैै -> ै
+        self.assertEqual(self.converter.convert("}}"), "ै")
+        # ुु -> ु
+        self.assertEqual(self.converter.convert("''"), "ु")
+        # ूू -> ू
+        self.assertEqual(self.converter.convert('""'), "ू")
 
     def test_vowel_combinations(self):
         """Test vowel sign combinations"""

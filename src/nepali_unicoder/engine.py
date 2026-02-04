@@ -2,7 +2,6 @@ import re
 from typing import Optional
 
 from nepali_unicoder.loader import PreetiLoader, RuleLoader
-from nepali_unicoder.rules import PREETI_TO_UNICODE_MAPPING
 from nepali_unicoder.tokenizer import Tokenizer
 from nepali_unicoder.trie import Trie
 
@@ -21,7 +20,11 @@ class Engine:
             if mode == "preeti":
                 loader = PreetiLoader()
                 # Load post-processing rules for Preeti mode
-                self.post_rules = PREETI_TO_UNICODE_MAPPING.get("post_rules", [])
+                raw_rules = loader.get_post_rules()
+                self.post_rules = [
+                    (re.compile(pattern), replacement)
+                    for pattern, replacement in raw_rules
+                ]
             else:
                 loader = RuleLoader()
             self.trie = loader.load()
@@ -69,8 +72,8 @@ class Engine:
 
                 while idx < chunk_len:
                     # Try to find longest match starting at idx
-                    sub = chunk[idx:]
-                    match_val, match_len = self.trie.longest_match(sub)
+                    # Pass chunk and idx directly to avoid slicing
+                    match_val, match_len = self.trie.longest_match(chunk, idx)
 
                     if match_val:
                         result.append(match_val)
@@ -94,5 +97,5 @@ class Engine:
         Used for Preeti mode to handle contextual transformations.
         """
         for pattern, replacement in self.post_rules:
-            text = re.sub(pattern, replacement, text)
+            text = pattern.sub(replacement, text)
         return text
