@@ -20,7 +20,11 @@ class Engine:
             if mode == "preeti":
                 loader = PreetiLoader()
                 # Load post-processing rules for Preeti mode
-                self.post_rules = loader.get_post_rules()
+                raw_rules = loader.get_post_rules()
+                self.post_rules = [
+                    (re.compile(pattern), replacement)
+                    for pattern, replacement in raw_rules
+                ]
             else:
                 loader = RuleLoader()
             self.trie = loader.load()
@@ -93,5 +97,5 @@ class Engine:
         Used for Preeti mode to handle contextual transformations.
         """
         for pattern, replacement in self.post_rules:
-            text = re.sub(pattern, replacement, text)
+            text = pattern.sub(replacement, text)
         return text
