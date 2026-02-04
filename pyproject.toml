@@ -20,6 +20,9 @@ classifiers = [
 ]
 keywords = ["nepali", "unicoder", "roman to devanagari", "nepali transliteration", "preeti to unicode"]
 
+[project.scripts]
+nepali-unicoder = "nepali_unicoder.__main__:main"
+
 
 [project.urls]
 "Homepage" = "https://github.com/realsanjeev/nepali_unicoder"

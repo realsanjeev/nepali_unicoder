@@ -32,12 +32,16 @@ pip install nepali-unicoder
 You can use the converter directly from the terminal:
 
 ```bash
-# Direct argument
+# Using the installed command
+nepali-unicoder "namaste"
+# Output: नमस्ते
+
+# Or using python module
 python -m nepali_unicoder "namaste"
 # Output: नमस्ते
 
 # Pipe input
-echo "mero naam sanjeev ho" | python -m nepali_unicoder
+echo "mero naam sanjeev ho" | nepali-unicoder
 # Output: मेरो नाम सन्जीव् हो
 ```
 

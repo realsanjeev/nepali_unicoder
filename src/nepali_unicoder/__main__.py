@@ -1,28 +1,37 @@
+import argparse
 import sys
 
 from nepali_unicoder.convert import Converter
 
 
 def main():
-    args = sys.argv[1:]
-    mode = "roman"
+    parser = argparse.ArgumentParser(
+        prog="python -m nepali_unicoder",
+        description="Convert Romanized Nepali or Preeti font text to Unicode Devanagari.",
+    )
+    parser.add_argument(
+        "text",
+        nargs="*",
+        help="The text to convert. If omitted, reads from stdin.",
+    )
+    parser.add_argument(
+        "--preeti",
+        action="store_true",
+        help="Enable Preeti to Unicode conversion mode.",
+    )
 
-    if "--preeti" in args:
-        mode = "preeti"
-        args.remove("--preeti")
+    args = parser.parse_args()
 
-    if len(args) < 1:
-        # Check if there is stdin
-        if not sys.stdin.isatty():
-            input_text = sys.stdin.read()
-        else:
-            print('Usage: python -m nepali_unicoder "your roman text here"')
-            print('       python -m nepali_unicoder --preeti "your preeti text here"')
-            print('       or: echo "namaste" | python -m nepali_unicoder')
-            return
+    # Determine input text
+    if args.text:
+        input_text = " ".join(args.text)
+    elif not sys.stdin.isatty():
+        input_text = sys.stdin.read().strip()
     else:
-        input_text = " ".join(args)
+        parser.print_help()
+        return
 
+    mode = "preeti" if args.preeti else "roman"
     converter = Converter(mode=mode)
     result = converter.convert(input_text)
     print(result)
