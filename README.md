@@ -42,7 +42,7 @@ python -m nepali_unicoder "namaste"
 
 # Pipe input
 echo "mero naam sanjeev ho" | nepali-unicoder
-# Output: मेरो नाम सन्जीव् हो
+# Output: मेरो नाम् सन्जीव् हो
 ```
 
 ### Python API
@@ -60,7 +60,7 @@ print(converter.convert(text))
 # Using 'as-is' blocks for English text
 mixed_text = "mero naam {Sanjeev} ho"
 print(converter.convert(mixed_text))
-# Output: मेरो नाम Sanjeev हो
+# Output: मेरो नाम् Sanjeev हो
 ```
 
 ### Preeti Mode
@@ -76,7 +76,7 @@ preeti_converter = Converter(mode="preeti")
 # Basic conversion
 preeti_text = "s{sf"  # Preeti characters
 print(preeti_converter.convert(preeti_text))
-# Output: र्कर्का
+# Output: र्कका
 
 # The converter handles:
 # - Reph positioning: { → र् (moves before consonant)
@@ -113,7 +113,7 @@ print(preeti_converter.convert(preeti_text))
 
 ```bash
 python -m nepali_unicoder --preeti "s{sf"
-# Output: र्कर्का
+# Output: र्कका
 ```
 
 
@@ -134,7 +134,7 @@ The converter handles mixed content gracefully. You can use `{}` to keep text as
 ```python
 text = "mero naam {Sanjeev} ho ra ma 12.5 barsa ko bhaye."
 print(converter.convert(text))
-# Output: मेरो नाम Sanjeev हो र म १२.५ बर्स को भए।
+# Output: मेरो नाम् Sanjeev हो र म १२.५ बर्स को भये।
 ```
 
 ### Configuration

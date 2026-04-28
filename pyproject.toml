@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "nepali_unicoder"
-version = "0.1.2"
+version = "0.2.0"
 description = "A Python package for Roman to Nepali (Devanagari) transliteration"
 authors = [
   { name="realsanjeev", email="075bei033.sanjeev@pcampus.edu.np" },
