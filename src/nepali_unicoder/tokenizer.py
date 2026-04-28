@@ -1,3 +1,4 @@
+import re
 from dataclasses import dataclass
 from typing import List
 
@@ -9,21 +10,21 @@ class Token:
 
 
 class Tokenizer:
+    # Compiled once at class definition time -- not per tokenize() call.
+    _RE_BLOCK = re.compile(r"\{([^}]*)\}")
+    _RE_NUMBER = re.compile(r"\d*\.\d+|\d+")
+
     def tokenize(self, text: str, use_blocks: bool = True) -> List[Token]:
         """
         Split text into tokens using regex-based matching for robustness.
         """
-        import re
-
         tokens = []
         i = 0
         n = len(text)
         roman_buffer = []
 
-        # Pre-compile regexes
-        # Note: re.match checks from the beginning of the string (or at pos)
-        re_block = re.compile(r"\{([^}]*)\}")
-        re_number = re.compile(r"\d*\.\d+|\d+")
+        re_block = self._RE_BLOCK
+        re_number = self._RE_NUMBER
 
         def flush_roman():
             if roman_buffer:

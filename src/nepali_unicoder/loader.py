@@ -90,32 +90,33 @@ class RuleLoader:
         try:
             with open(self.word_maps_path, "r", encoding="utf-8") as f:
                 mappings = json.load(f)
-                for roman, devanagari in mappings.items():
-                    trie.add(roman, devanagari)
-                    # Automatically add capitalized version if it doesn't exist
-                    # (e.g. if 'nepal' is in maps, also add 'Nepal')
-                    cap_roman = roman.capitalize()
-                    if cap_roman not in mappings:
-                        trie.add(cap_roman, devanagari)
-        except Exception as e:
-            print(f"Error reading word_maps.json: {e}")
+        except (json.JSONDecodeError, UnicodeDecodeError):
+            raise
+        except OSError:
+            raise
+
+        for roman, devanagari in mappings.items():
+            trie.add(roman, devanagari)
+            # Automatically add capitalized version if it doesn't exist
+            # (e.g. if 'nepal' is in maps, also add 'Nepal')
+            cap_roman = roman.capitalize()
+            if cap_roman not in mappings:
+                trie.add(cap_roman, devanagari)
 
 
 class PreetiLoader:
     def __init__(self):
-        pass
+        # Parse the JSON file once; reused by both load() and get_post_rules()
+        # so the file is never read more than once per PreetiLoader instance.
+        self._data = load_json_data("preeti_rules.json")
 
     def load(self) -> Trie:
         """Load Preeti rules into a Trie."""
         trie = Trie()
-        data = load_json_data("preeti_rules.json")
-
-        mappings = data.get("mappings", {})
+        mappings = self._data.get("mappings", {})
         for key, value in mappings.items():
             trie.add(key, value)
-
         return trie
 
     def get_post_rules(self):
-        data = load_json_data("preeti_rules.json")
-        return data.get("post_rules", [])
+        return self._data.get("post_rules", [])
