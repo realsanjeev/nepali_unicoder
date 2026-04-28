@@ -60,7 +60,7 @@ print(converter.convert(text))
 # Using 'as-is' blocks for English text
 mixed_text = "mero naam {Sanjeev} ho"
 print(converter.convert(mixed_text))
-# Output: मेरो नाम Sanjeev हो
+# Output: मेरो नाम् Sanjeev हो
 ```
 
 ### Preeti Mode
