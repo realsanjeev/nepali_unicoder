@@ -1,7 +1,10 @@
 import json
+import logging
 import os
 
 from nepali_unicoder.trie import Trie
+
+_logger = logging.getLogger(__name__)
 
 
 def load_json_data(filename):
@@ -10,7 +13,7 @@ def load_json_data(filename):
         with open(path, "r", encoding="utf-8") as f:
             return json.load(f)
     except FileNotFoundError:
-        print(f"Warning: Rule file {filename} not found.")
+        _logger.warning("Rule file %s not found.", filename)
         return {}
 
 
@@ -87,13 +90,8 @@ class RuleLoader:
         if not os.path.exists(self.word_maps_path):
             return
 
-        try:
-            with open(self.word_maps_path, "r", encoding="utf-8") as f:
-                mappings = json.load(f)
-        except (json.JSONDecodeError, UnicodeDecodeError):
-            raise
-        except OSError:
-            raise
+        with open(self.word_maps_path, "r", encoding="utf-8") as f:
+            mappings = json.load(f)
 
         for roman, devanagari in mappings.items():
             trie.add(roman, devanagari)

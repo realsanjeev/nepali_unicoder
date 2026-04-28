@@ -7,12 +7,18 @@ from nepali_unicoder.trie import Trie
 
 
 class Engine:
+    VALID_MODES = {"roman", "preeti"}
+
     def __init__(
         self,
         trie: Optional[Trie] = None,
         tokenizer: Optional[Tokenizer] = None,
         mode: str = "roman",
     ):
+        if mode not in self.VALID_MODES:
+            raise ValueError(
+                f"Invalid mode {mode!r}. Expected one of {sorted(self.VALID_MODES)}"
+            )
         self.mode = mode
         self.post_rules = []
 
