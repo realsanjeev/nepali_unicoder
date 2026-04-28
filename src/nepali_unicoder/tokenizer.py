@@ -23,7 +23,7 @@ class Tokenizer:
         # Pre-compile regexes
         # Note: re.match checks from the beginning of the string (or at pos)
         re_block = re.compile(r"\{([^}]*)\}")
-        re_number = re.compile(r"\d+(\.\d+)?")
+        re_number = re.compile(r"\d*\.\d+|\d+")
 
         def flush_roman():
             if roman_buffer:
@@ -53,6 +53,13 @@ class Tokenizer:
                     flush_roman()
                     tokens.append(Token(value=match_block.group(1), type="BLOCK"))
                     i = match_block.end()
+                    continue
+
+                # Escaped brace }}
+                if text.startswith("}}", i):
+                    flush_roman()
+                    tokens.append(Token(value="}", type="LITERAL"))
+                    i += 2
                     continue
 
                 # Unmatched closing brace }
