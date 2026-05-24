@@ -66,12 +66,12 @@ Use the `--preeti` flag for Preeti font text.
 
 ```bash
 python -m nepali_unicoder --preeti "s{sf"
-# Output: र्कर्का
+# Output: र्कका
 ```
 
 ### Piping Input
 
 ```bash
 echo "mero naam sanjeev ho" | python -m nepali_unicoder
-# Output: मेरो नाम सन्जीव् हो
+# Output: मेरो नाम् सन्जीव् हो
 ```

@@ -59,11 +59,16 @@ class TestNepaliUnicoder(unittest.TestCase):
         self.assertEqual(self.converter.convert("0123456789"), "०१२३४५६७८९")
         # Decimal number test
         self.assertEqual(self.converter.convert("123.34"), "१२३.३४")
+        self.assertEqual(self.converter.convert(".5"), ".५")
 
     def test_as_is_block(self):
         self.assertEqual(self.converter.convert("{english}"), "english")
         self.assertEqual(self.converter.convert("mero {name} ho"), "मेरो name हो")
         self.assertEqual(self.converter.convert("{{"), "{")
+        # Fix #6: }} should produce a literal }
+        self.assertEqual(self.converter.convert("}}"), "}")
+        # Mix of both escapes
+        self.assertEqual(self.converter.convert("{{ka}}"), "{क}")
 
     def test_conjuncts(self):
         # k + t -> क्त
@@ -75,6 +80,42 @@ class TestNepaliUnicoder(unittest.TestCase):
         self.assertEqual(self.converter.convert("gya"), "ज्ञ")
         # gyaana -> ज्ञान
         self.assertEqual(self.converter.convert("gyaana"), "ज्ञान")
+
+    def test_compound_consonant_tra(self):
+        """Fix #2: 'tra' is a compound consonant whose stem ends in 'a'.
+        It must produce त्र (not त्र् with halanta)."""
+        # Corrected mappings after moving 'tra' to 'tr' consonant
+        self.assertEqual(self.converter.convert("tra"), "त्र")
+        self.assertEqual(self.converter.convert("traa"), "त्रा")
+        self.assertEqual(self.converter.convert("tri"), "त्रि")
+        self.assertEqual(self.converter.convert("tree"), "त्री")
+        self.assertEqual(self.converter.convert("tru"), "त्रु")
+        self.assertEqual(self.converter.convert("troo"), "त्रू")
+        self.assertEqual(self.converter.convert("tre"), "त्रे")
+        self.assertEqual(self.converter.convert("trai"), "त्रै")
+        self.assertEqual(self.converter.convert("tro"), "त्रो")
+
+        # In a word
+        self.assertEqual(self.converter.convert("raashtra"), "राश्त्र")
+
+    def test_lRi_vowel(self):
+        """Fix #1: independent vowel lRi (ऌ) must not be overwritten
+        by the consonant 'l' + matra 'Ri' combo."""
+        self.assertEqual(self.converter.convert("lRi"), "ऌ")
+        # Consonant l + Ri matra is still accessible via 'l' alone + separate vowel
+        self.assertEqual(self.converter.convert("la"), "ल")
+        self.assertEqual(self.converter.convert("lRi"), "ऌ")   # vowel wins
+
+    def test_word_maps_case_sensitivity(self):
+        """Fix #5: word_maps keys are now case-sensitive; both uppercase and
+        mixed-case entries work exactly as written."""
+        # lowercase entries
+        self.assertEqual(self.converter.convert("nepal"), "नेपाल")
+        self.assertEqual(self.converter.convert("kathmandu"), "काठमाडौं")
+        self.assertEqual(self.converter.convert("sms"), "एसएमएस")
+        # uppercase / mixed-case entries preserved from word_maps.json
+        self.assertEqual(self.converter.convert("Kathmandu"), "काठमाडौं")
+        self.assertEqual(self.converter.convert("SMS"), "एसएमएस")
 
 
 class TestPreetiUnicoder(unittest.TestCase):
