@@ -104,7 +104,7 @@ class TestNepaliUnicoder(unittest.TestCase):
         self.assertEqual(self.converter.convert("lRi"), "ऌ")
         # Consonant l + Ri matra is still accessible via 'l' alone + separate vowel
         self.assertEqual(self.converter.convert("la"), "ल")
-        self.assertEqual(self.converter.convert("lRi"), "ऌ")   # vowel wins
+        self.assertEqual(self.converter.convert("lRi"), "ऌ")  # vowel wins
 
     def test_word_maps_case_sensitivity(self):
         """Fix #5: word_maps keys are now case-sensitive; both uppercase and
@@ -225,6 +225,7 @@ class TestPreetiUnicoder(unittest.TestCase):
         self.assertEqual(self.converter.convert("5'§f5'§}"), "छुट्टाछुट्टै")
         self.assertEqual(self.converter.convert("s[lqd al'4dQf"), "कृत्रिम बुद्धिमत्ता")
         self.assertEqual(self.converter.convert("cfl6{lkmlzon"), "आर्टिफिशियल")
+        self.assertEqual(self.converter.convert(";f/f+z M"), "सारांश:")
 
     def test_duplicate_removal(self):
         """Test that duplicate matras are removed"""
