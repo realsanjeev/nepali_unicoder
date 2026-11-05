@@ -27,6 +27,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `"mero naam {Sanjeev} ho"` from `नाम` to `नाम्` — `naam` without a trailing
   vowel correctly produces the halanta form.
 
+## [0.2.1] – 2026-05-25
+
+### Fixed
+
+- **Space followed by visarga in Preeti mode**: Fixed transliteration of ` M` (space + `M`) to correctly yield `:` (colon).
+
+
 ### Changed
 
 - **`Converter` public API** (`__init__.py`): `Converter` is now importable
