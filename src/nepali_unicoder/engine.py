@@ -1,46 +1,68 @@
-import re
-from typing import Optional
+from __future__ import annotations
 
-from nepali_unicoder.loader import PreetiLoader, RuleLoader
-from nepali_unicoder.tokenizer import Tokenizer
+import re
+from functools import lru_cache
+
+from nepali_unicoder.loader import (
+    PreetiLoader,
+    RuleLoader,
+    load_json_data,
+    with_capitalized,
+)
+from nepali_unicoder.tokenizer import Token, Tokenizer
 from nepali_unicoder.trie import Trie
+
+_RE_WORD = re.compile(r"[A-Za-z]+")
+
+
+@lru_cache(maxsize=None)
+def _load_defaults(mode: str):
+    """Build a mode's (trie, post_rules, word_map) once per process.
+    Shared by every Engine, so treat them as read-only."""
+    if mode == "preeti":
+        loader = PreetiLoader()
+        post_rules = tuple(
+            (re.compile(pattern, re.MULTILINE), replacement)
+            for pattern, replacement in loader.get_post_rules()
+        )
+        return loader.load(), post_rules, {}
+    word_map = with_capitalized(load_json_data("word_maps.json"))
+    return RuleLoader().load(), (), word_map
 
 
 class Engine:
-    VALID_MODES = {"roman", "preeti"}
+    VALID_MODES = frozenset({"roman", "preeti"})
 
     def __init__(
         self,
-        trie: Optional[Trie] = None,
-        tokenizer: Optional[Tokenizer] = None,
+        trie: Trie | None = None,
+        tokenizer: Tokenizer | None = None,
         mode: str = "roman",
+        word_map: dict[str, str] | None = None,
     ):
         if mode not in self.VALID_MODES:
             raise ValueError(
                 f"Invalid mode {mode!r}. Expected one of {sorted(self.VALID_MODES)}"
             )
+        if word_map:
+            if mode != "roman":
+                raise ValueError("word_map is only supported in 'roman' mode")
+            bad = [key for key in word_map if not _RE_WORD.fullmatch(key)]
+            if bad:
+                raise ValueError(
+                    f"word_map keys must be single words of ASCII letters: {bad!r}"
+                )
         self.mode = mode
-        self.post_rules = []
 
         if trie is None:
-            if mode == "preeti":
-                loader = PreetiLoader()
-                # Load post-processing rules for Preeti mode
-                raw_rules = loader.get_post_rules()
-                self.post_rules = [
-                    (re.compile(pattern), replacement)
-                    for pattern, replacement in raw_rules
-                ]
-            else:
-                loader = RuleLoader()
-            self.trie = loader.load()
+            self.trie, post_rules, default_map = _load_defaults(mode)
         else:
-            self.trie = trie
+            self.trie, post_rules, default_map = trie, (), {}
+        self.post_rules = post_rules
+        # User entries win over the bundled ones; copy so the cache stays untouched.
+        self.word_map = {**default_map, **with_capitalized(word_map or {})}
 
-        if tokenizer is None:
-            self.tokenizer = Tokenizer()
-        else:
-            self.tokenizer = tokenizer
+        self.tokenizer = tokenizer or Tokenizer()
 
     def transliterate(self, text: str) -> str:
         """
@@ -49,14 +71,15 @@ class Engine:
         if not text:
             return ""
 
-        use_blocks = self.mode != "preeti"
-        tokens = self.tokenizer.tokenize(text, use_blocks=use_blocks)
+        if self.mode == "preeti":
+            # Every Preeti key (digits, '.', braces) is a glyph: map the whole text.
+            tokens = [Token(value=text, type="ROMAN")]
+        else:
+            tokens = self.tokenizer.tokenize(text)
         result = []
 
         for token in tokens:
-            if token.type == "BLOCK":
-                result.append(token.value)
-            elif token.type == "LITERAL":
+            if token.type == "BLOCK" or token.type == "LITERAL":
                 result.append(token.value)
             elif token.type == "NUMBER":
                 # Process Number chunk: transliterate digits, keep others (like .) as is
@@ -77,6 +100,14 @@ class Engine:
                 chunk_len = len(chunk)
 
                 while idx < chunk_len:
+                    # Word maps apply to whole words only ('bus' but not 'bushan')
+                    if self.word_map and (idx == 0 or not chunk[idx - 1].isalpha()):
+                        word = _RE_WORD.match(chunk, idx)
+                        if word and word.group() in self.word_map:
+                            result.append(self.word_map[word.group()])
+                            idx = word.end()
+                            continue
+
                     # Try to find longest match starting at idx
                     # Pass chunk and idx directly to avoid slicing
                     match_val, match_len = self.trie.longest_match(chunk, idx)

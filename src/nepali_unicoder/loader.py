@@ -1,33 +1,29 @@
 import json
-import logging
 import os
 
 from nepali_unicoder.trie import Trie
 
-_logger = logging.getLogger(__name__)
-
 
 def load_json_data(filename):
+    # Bundled data files are required; a missing one is a broken install, so let it raise.
     path = os.path.join(os.path.dirname(__file__), "data", filename)
-    try:
-        with open(path, "r", encoding="utf-8") as f:
-            return json.load(f)
-    except FileNotFoundError:
-        _logger.warning("Rule file %s not found.", filename)
-        return {}
+    with open(path, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+
+def with_capitalized(mappings: dict) -> dict:
+    """Add a capitalized variant of each key ('nepal' -> also 'Nepal')
+    unless that variant is listed explicitly."""
+    word_map = {roman.capitalize(): dev for roman, dev in mappings.items()}
+    word_map.update(mappings)
+    return word_map
 
 
 class RuleLoader:
-    def __init__(self):
-        self.word_maps_path = os.path.join(
-            os.path.dirname(__file__), "data", "word_maps.json"
-        )
-
     def load(self) -> Trie:
-        """Load rules and custom mappings into a Trie."""
+        """Load character rules into a Trie."""
         trie = Trie()
         self._load_rules(trie)
-        self._load_custom_mappings(trie)
         return trie
 
     def _load_rules(self, trie: Trie):
@@ -85,21 +81,6 @@ class RuleLoader:
 
         for rom, dev in digits.items():
             trie.add(rom, dev)
-
-    def _load_custom_mappings(self, trie: Trie):
-        if not os.path.exists(self.word_maps_path):
-            return
-
-        with open(self.word_maps_path, "r", encoding="utf-8") as f:
-            mappings = json.load(f)
-
-        for roman, devanagari in mappings.items():
-            trie.add(roman, devanagari)
-            # Automatically add capitalized version if it doesn't exist
-            # (e.g. if 'nepal' is in maps, also add 'Nepal')
-            cap_roman = roman.capitalize()
-            if cap_roman not in mappings:
-                trie.add(cap_roman, devanagari)
 
 
 class PreetiLoader:

@@ -21,7 +21,7 @@ from nepali_unicoder.convert import Converter
 converter = Converter()
 
 # Convert phonetic Roman text
-print(converter.convert("namaste")) 
+print(converter.convert("namaste"))
 # Output: नमस्ते
 ```
 
@@ -35,6 +35,21 @@ preeti_converter = Converter(mode="preeti")
 print(preeti_converter.convert("s{sf"))
 # Output: र्कर्का
 ```
+
+### Custom Words
+
+Pass your own whole-word mappings with `word_map`. They take priority over the
+bundled ones, a capitalized variant is added automatically (`sanjeev` also
+matches `Sanjeev`), and they only match whole words (`sanjeevko` is not affected).
+
+```python
+converter = Converter(word_map={"sanjeev": "सञ्जीव", "github": "गिटहब"})
+print(converter.convert("Sanjeev github ma chha"))
+# Output: सञ्जीव गिटहब म छ
+```
+
+Keys must be single words of ASCII letters. `word_map` is only available in
+Roman mode.
 
 ### Handling Mixed English Content
 

@@ -1,6 +1,7 @@
+from __future__ import annotations
+
 import re
 from dataclasses import dataclass
-from typing import List
 
 
 @dataclass
@@ -14,7 +15,7 @@ class Tokenizer:
     _RE_BLOCK = re.compile(r"\{([^}]*)\}")
     _RE_NUMBER = re.compile(r"\d*\.\d+|\d+")
 
-    def tokenize(self, text: str, use_blocks: bool = True) -> List[Token]:
+    def tokenize(self, text: str) -> list[Token]:
         """
         Split text into tokens using regex-based matching for robustness.
         """
@@ -39,43 +40,42 @@ class Tokenizer:
                 i += 3
                 continue
 
-            # 2. Check for Blocks and Braces (if enabled)
-            if use_blocks:
-                # Escaped brace {{
-                if text.startswith("{{", i):
-                    flush_roman()
-                    tokens.append(Token(value="{", type="LITERAL"))
-                    i += 2
-                    continue
+            # 2. Check for Blocks and Braces
+            # Escaped brace {{
+            if text.startswith("{{", i):
+                flush_roman()
+                tokens.append(Token(value="{", type="LITERAL"))
+                i += 2
+                continue
 
-                # Block {content}
-                match_block = re_block.match(text, i)
-                if match_block:
-                    flush_roman()
-                    tokens.append(Token(value=match_block.group(1), type="BLOCK"))
-                    i = match_block.end()
-                    continue
+            # Block {content}
+            match_block = re_block.match(text, i)
+            if match_block:
+                flush_roman()
+                tokens.append(Token(value=match_block.group(1), type="BLOCK"))
+                i = match_block.end()
+                continue
 
-                # Escaped brace }}
-                if text.startswith("}}", i):
-                    flush_roman()
-                    tokens.append(Token(value="}", type="LITERAL"))
-                    i += 2
-                    continue
+            # Escaped brace }}
+            if text.startswith("}}", i):
+                flush_roman()
+                tokens.append(Token(value="}", type="LITERAL"))
+                i += 2
+                continue
 
-                # Unmatched closing brace }
-                if text.startswith("}", i):
-                    flush_roman()
-                    tokens.append(Token(value="}", type="LITERAL"))
-                    i += 1
-                    continue
+            # Unmatched closing brace }
+            if text.startswith("}", i):
+                flush_roman()
+                tokens.append(Token(value="}", type="LITERAL"))
+                i += 1
+                continue
 
-                # Unmatched opening brace {
-                if text.startswith("{", i):
-                    flush_roman()
-                    tokens.append(Token(value="{", type="LITERAL"))
-                    i += 1
-                    continue
+            # Unmatched opening brace {
+            if text.startswith("{", i):
+                flush_roman()
+                tokens.append(Token(value="{", type="LITERAL"))
+                i += 1
+                continue
 
             # 3. Check for Numbers
             match_number = re_number.match(text, i)

@@ -7,6 +7,39 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.3.0] – 2026-11-19
+
+### Added
+
+- **Custom words**: `Converter(word_map={"sanjeev": "सञ्जीव"})` adds whole-word
+  mappings that override the bundled ones (Roman mode only).
+- **Table caching**: each mode's lookup table is built once per process, so
+  creating extra `Converter`s is cheap.
+
+### Fixed
+
+- **Word maps match whole words only**: entries in `word_maps.json` no longer
+  fire inside longer words (`bushan` was `बसहन्`, now `बुशन्`; `plant` was
+  `प्लानत्`, now `प्लन्त्`).
+- **Preeti digits and `.`**: Preeti input is no longer split into numbers, so
+  `1.5` now converts to `ज्ञ।छ` instead of `ज्ञ.छ`.
+- **Preeti `^ः` post-rule** now applies at the start of every line, not just
+  the start of the text.
+- A missing bundled data file now raises `FileNotFoundError` instead of
+  silently producing unconverted output.
+
+### Changed
+
+- `RuleLoader.load()` no longer puts word maps in the trie; they are kept
+  separately in `Engine.word_map`.
+- `Tokenizer.tokenize()` no longer takes `use_blocks`; the Engine no longer
+  tokenizes Preeti text.
+- `requires-python` raised to `>=3.8` (matches CI); CI now also tests 3.13.
+- Release workflow fails if the release tag does not match the package version.
+- Removed empty `rules.py` and a stale `MANIFEST.in` line.
+
+---
+
 ## [0.2.0] – 2026-04-28
 
 ### Fixed

@@ -1,12 +1,12 @@
-from typing import Dict, Optional, Tuple
+from __future__ import annotations
 
 
 class TrieNode:
-    __slots__ = ("children", "value", "is_end")
+    __slots__ = ("children", "is_end", "value")
 
     def __init__(self):
-        self.children: Dict[str, TrieNode] = {}
-        self.value: Optional[str] = None
+        self.children: dict[str, TrieNode] = {}
+        self.value: str | None = None
         self.is_end: bool = False
 
 
@@ -24,9 +24,7 @@ class Trie:
         node.is_end = True
         node.value = value
 
-    def longest_match(
-        self, text: str, start_index: int = 0
-    ) -> Tuple[Optional[str], int]:
+    def longest_match(self, text: str, start_index: int = 0) -> tuple[str | None, int]:
         """
         Find the longest key in the Trie that matches the start of the text.
         Returns (value, length_of_match).

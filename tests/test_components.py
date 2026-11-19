@@ -125,6 +125,7 @@ class TestPublicAPI(unittest.TestCase):
         # Import at module level already asserts this; just confirm it's the
         # same class as the one in convert.py
         from nepali_unicoder.convert import Converter as _Converter
+
         self.assertIs(Converter, _Converter)
 
     def test_basic_conversion_via_public_api(self):
@@ -135,6 +136,32 @@ class TestPublicAPI(unittest.TestCase):
         c = Converter(mode="preeti")
         self.assertEqual(c.convert("s{"), "र्क")
 
+
+class TestCustomWordMap(unittest.TestCase):
+    def test_user_words(self):
+        c = Converter(word_map={"sanjeev": "सञ्जीव", "bus": "बस्"})
+        self.assertEqual(c.convert("sanjeev"), "सञ्जीव")
+        self.assertEqual(c.convert("Sanjeev"), "सञ्जीव")  # capitalized variant
+        self.assertEqual(c.convert("bus"), "बस्")  # overrides bundled entry
+        self.assertEqual(c.convert("nepal"), "नेपाल")  # bundled entries kept
+        self.assertEqual(c.convert("sanjeevko"), "सन्जीव्को")  # whole words only
+
+    def test_user_words_do_not_leak(self):
+        Converter(word_map={"bus": "बस्"})
+        self.assertEqual(Converter().convert("bus"), "बस")
+
+    def test_invalid_word_map(self):
+        with self.assertRaises(ValueError):
+            Converter(word_map={"two words": "x"})
+        with self.assertRaises(ValueError):
+            Converter(mode="preeti", word_map={"abc": "x"})
+
+
+class TestTableCache(unittest.TestCase):
+    def test_tables_shared_per_mode(self):
+        self.assertIs(Converter().engine.trie, Converter().engine.trie)
+        self.assertIs(Converter("preeti").engine.trie, Converter("preeti").engine.trie)
+        self.assertIsNot(Converter().engine.trie, Converter("preeti").engine.trie)
 
 
 if __name__ == "__main__":
