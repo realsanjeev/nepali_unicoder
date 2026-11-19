@@ -14,7 +14,7 @@ Read the **[Full Documentation](https://realsanjeev.github.io/nepali_unicoder/)*
 - **Smart Vowel Handling**: Distinguishes between independent vowels (e.g., 'aa' -> 'आ') and vowel signs/matras (e.g., 'ka' -> 'क', 'kaa' -> 'का').
 - **Contextual Rules**: Handles complex Devanagari rules like reph positioning, matra reordering, and special character combinations.
 - **Mixed Content Support**: Allows keeping English words or specific text in Roman script using `{}` blocks.
-- **Customizable**: Supports custom word-level overrides via `word_maps.json`.
+- **Customizable**: Supports custom word-level overrides via `word_maps.json` or `Converter(word_map={...})`.
 - **CLI Support**: Can be used directly from the command line.
 
 ## Installation
@@ -61,6 +61,11 @@ print(converter.convert(text))
 mixed_text = "mero naam {Sanjeev} ho"
 print(converter.convert(mixed_text))
 # Output: मेरो नाम् Sanjeev हो
+
+# Your own whole-word mappings (override the bundled ones)
+converter = Converter(word_map={"sanjeev": "सञ्जीव"})
+print(converter.convert("Sanjeev"))
+# Output: सञ्जीव
 ```
 
 ### Preeti Mode

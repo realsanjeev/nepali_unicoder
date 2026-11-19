@@ -117,10 +117,22 @@ class TestNepaliUnicoder(unittest.TestCase):
         self.assertEqual(self.converter.convert("Kathmandu"), "काठमाडौं")
         self.assertEqual(self.converter.convert("SMS"), "एसएमएस")
 
+    def test_word_maps_whole_words_only(self):
+        """Word maps must not fire inside longer words ('bus' in 'bushan')."""
+        self.assertEqual(self.converter.convert("bus"), "बस")
+        self.assertEqual(self.converter.convert("bus chadhe"), "बस चधे")
+        self.assertEqual(self.converter.convert("bushan"), "बुशन्")
+        self.assertEqual(self.converter.convert("plant"), "प्लन्त्")
+        self.assertEqual(self.converter.convert("nepal, bus."), "नेपाल, बस।")
+
 
 class TestPreetiUnicoder(unittest.TestCase):
     def setUp(self):
         self.converter = Converter(mode="preeti")
+
+    def test_digits_and_dots_use_preeti_map(self):
+        """Digits and '.' are Preeti glyphs, not a decimal number."""
+        self.assertEqual(self.converter.convert("1.5"), "ज्ञ।छ")
 
     def test_qwerty_alphabet(self):
         """Basic character mappings (a-z, A-Z)"""

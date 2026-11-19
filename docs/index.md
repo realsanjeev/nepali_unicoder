@@ -46,4 +46,4 @@ graph TD
 - **Greedy Phonetic Matching**: Prioritizes longer matches for more accurate Roman-to-Unicode conversion.
 - **Extensive Preeti Support**: Over 40+ mappings and contextual rules (reph, matras, combined forms).
 - **English Block Support**: Use `{}` to preserve English text within converted strings.
-- **Custom Overrides**: Add custom word-level mappings via `word_maps.json`.
+- **Custom Overrides**: Add custom word-level mappings via `word_maps.json` or `Converter(word_map={...})`.
